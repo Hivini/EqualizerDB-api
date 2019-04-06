@@ -1,0 +1,5 @@
+# Project specific
+config/*
+
+# Node
+node_modules
