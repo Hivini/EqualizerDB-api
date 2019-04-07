@@ -1,13 +1,18 @@
 const express = require('express');
 const oracledb = require('oracledb');
 const dbconfig = require('./config/dbconfig');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
 
 app.use(cors());
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
 
-async function run() {
+async function run(query) {
 
   let connection;
   let result;
@@ -20,7 +25,7 @@ async function run() {
     });
 
     result = await connection.execute(
-      'SELECT * FROM NARUTO'
+      query
     );
     console.log(result.rows);
 
@@ -48,7 +53,7 @@ app.use(function(req, res, next) {
 // Requests
 
 app.get('/', (req, res) => {
-  run().then((data) => res.send(data));
+  run(req.query.query).then((data) => res.send(data));
 });
 
 app.listen(3000, () => console.log('Server ready'));
