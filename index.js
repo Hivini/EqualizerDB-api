@@ -1,12 +1,16 @@
 const express = require('express');
 const oracledb = require('oracledb');
 const dbconfig = require('./config/dbconfig');
+const cors = require('cors');
 
 const app = express();
+
+app.use(cors());
 
 async function run() {
 
   let connection;
+  let result;
 
   try {
     connection = await oracledb.getConnection(  {
@@ -15,7 +19,7 @@ async function run() {
       connectString : dbconfig.connectString
     });
 
-    let result = await connection.execute(
+    result = await connection.execute(
       'SELECT * FROM NARUTO'
     );
     console.log(result.rows);
@@ -31,21 +35,20 @@ async function run() {
       }
     }
   }
+
+  return result;
 }
 
-run();
-
-
+/*
 // Middleware
 app.use(function(req, res, next) {
   res.status(404).send('Sorry cant find that!');
-});
-
+});*/
 
 // Requests
 
 app.get('/', (req, res) => {
-  res.send('Hi!')
+  run().then((data) => res.send(data));
 });
 
 app.listen(3000, () => console.log('Server ready'));
