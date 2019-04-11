@@ -9,7 +9,7 @@ router.get('/getBy', getBy);
 module.exports = router;
 
 function register(req, res, next) {
-    teamService.register(req.body)
+    teamService.register(JSON.parse(req.query.fieldsVal))
         .then(() => res.json({message: 'Inserted successfully'}))
         .catch(err => console.log(err));
 }

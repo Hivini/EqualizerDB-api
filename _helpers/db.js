@@ -89,7 +89,7 @@ async function createUser(email, hash, fname, lname, eteamid) {
 async function createTeam(tname, organization, tmanager) {
     let queryInfo = new Query('INSERT', 'TEAM');
     queryInfo.setSpecificInsert('tname', 'organization', 'tmanager');
-    queryInfo.setInsertValues('tname', organization, tmanager);
+    queryInfo.setInsertValues(tname, organization, tmanager);
     queryInfo.setInsertValuesType('CHAR', 'CHAR', 'NUMBER');
     // TODO Update employee accordingly
     return await runQueryInfo(queryInfo);

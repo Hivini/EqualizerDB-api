@@ -9,7 +9,7 @@ router.get('/getBy', getBy);
 module.exports = router;
 
 function register(req, res, next) {
-    projectService.register(req.body)
+    projectService.register(JSON.parse(req.query.fieldsVal))
         .then(() => res.json({message: 'Successfully'}))
         .catch(err => console.log(err));
 }
