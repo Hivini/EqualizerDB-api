@@ -34,7 +34,7 @@ async function create(userParam) {
     if (userParam.password) {
         userParam.password = bcrypt.hashSync(userParam.password, 10);
     }
-
+    // TODO Remove thi
     console.log(userParam);
 
     return await db.createUser(userParam.email, userParam.password, userParam.fname, userParam.lname, userParam.eteamid);
