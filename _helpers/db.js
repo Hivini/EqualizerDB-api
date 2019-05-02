@@ -51,17 +51,18 @@ async function sqlSearch(query) {
 }
 
 async function getUser(id) {
-    let query = "SELECT * FROM EMPLOYEES WHERE id=" + id;
+    let query = "SELECT * FROM EMPLOYEE WHERE wwid=" + id;
     let user = await runQuery(query);
     if (!user.rows.length > 0) {
         return [];
     }
-
+    // TODO This can be improved in a more dynamic way reading the metadata info provided by the oracle db
     return {
         id: user.rows[0][0],
-        firstName: user.rows[0][1],
-        lastName: user.rows[0][2],
-        password: user.rows[0][3]
+        password: user.rows[0][1],
+        firstName: user.rows[0][3],
+        lastName: user.rows[0][4],
+        rights: user.rows[0][7]
     };
 }
 
@@ -75,11 +76,11 @@ async function getBy(table, attributes, conditions) {
 async function createUser(email, hash, fname, lname, eteamid) {
     let queryInfo = new Query('INSERT', 'EMPLOYEE');
     if (eteamid === 'null') {
-        queryInfo.setSpecificInsert('email', 'password', 'fname', 'lname');
+        queryInfo.setSpecificInsert('email', 'epassword', 'fname', 'lname');
         queryInfo.setInsertValues(email, hash, fname, lname);
         queryInfo.setInsertValuesType('CHAR', 'CHAR', 'CHAR', 'CHAR');
     } else {
-        queryInfo.setSpecificInsert('email', 'password', 'fname', 'lname', 'eteamid');
+        queryInfo.setSpecificInsert('email', 'epassword', 'fname', 'lname', 'eteamid');
         queryInfo.setInsertValues(email, hash, fname, lname, eteamid);
         queryInfo.setInsertValuesType('CHAR', 'CHAR', 'CHAR', 'CHAR', 'NUMBER');
     }
@@ -148,6 +149,7 @@ async function createSetting(registerField, interfaceName, registerValue, bitNum
 
 async function runQueryInfo(queryInfo) {
     let query = queryInfo.constructQuery();
+    // TODO Remove this
     console.log(query);
     return await runQuery(query);
 }

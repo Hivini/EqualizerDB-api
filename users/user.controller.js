@@ -3,21 +3,22 @@ const router = express.Router();
 const userService = require('./user.service');
 
 // routes
-router.post('/authenticate', authenticate);
+router.post('/login', login);
 router.post('/register', register);
 router.get('/getBy', getBy);
 
 module.exports = router;
 
-function authenticate(req, res, next) {
+function login(req, res, next) {
     userService.authenticate(req.body)
-        .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' }))
-        .catch(err => next(err));
+        .then(user => user ? res.json(user): res.status(400).json({ message: 'Username or password is incorrect' }))
+        .catch(err => res.send(err));
 }
 
 function register(req, res, next) {
+    // TODO Return the ID of the employee
     userService.create(JSON.parse(req.query.fieldsVal))
-        .then(() => res.status(200))
+        .then(() => res.json({message: "Successful"}))
         .catch(err => console.log(err));
 }
 

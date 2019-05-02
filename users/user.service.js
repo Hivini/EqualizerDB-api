@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../_helpers/db');
+const {secret}= require('../credentials/jwt-credentials');
+const generateJWT = (payload, expiresIn) => jwt.sign(payload, secret, { expiresIn });
 
 module.exports = {
     authenticate,
@@ -15,14 +17,15 @@ module.exports = {
 
 async function authenticate({ id, password }) {
     const user = await db.getUser(id);
-    console.log(user);
     if (user && bcrypt.compareSync(password, user.password)) {
-        const { password, ...userWithoutPassword } = user;
-        const token = jwt.sign({ sub: user.id }, "lol");
-        return {
-            ...userWithoutPassword,
-            token
-        };
+        const token = jwt.sign({
+            id: user.id,
+            fname: user.firstName,
+            lname: user.lastName,
+            userRights: user.rights,
+        }, secret, {expiresIn: 60 * 60 * 24});
+        console.log(token);
+        return {token};
     }
 }
 
@@ -31,6 +34,7 @@ async function create(userParam) {
     if (userParam.password) {
         userParam.password = bcrypt.hashSync(userParam.password, 10);
     }
+
     console.log(userParam);
 
     return await db.createUser(userParam.email, userParam.password, userParam.fname, userParam.lname, userParam.eteamid);

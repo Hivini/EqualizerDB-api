@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const db = require('./_helpers/db');
-const jwt = require('./_helpers/jwt');
+const {jwt} = require('./_helpers/jwt');
 const errorHandler = require('./_helpers/error-handler');
 const app = express();
 
@@ -13,7 +13,7 @@ app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(cors());
 
 // Secure the API
-// app.use(jwt());
+app.use(jwt());
 
 // API routes
 app.use('/users', require('./users/user.controller'));

@@ -19,6 +19,6 @@ async function get(userParam) {
             attrArray.push(key);
         }
     }
-    // TODO Set conditions
+    // TODO Set conditions But what conditions???
     return await db.getBy('PROJECT', attrArray, []);
 }

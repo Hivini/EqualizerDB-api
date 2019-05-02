@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const homeService = require('./home.service');
-
 // routes
 router.get('/search', search);
 
