@@ -4,6 +4,7 @@ const projectService = require('./project.service');
 
 // routes
 router.post('/register', register);
+router.post('/createProject', createProject);
 router.get('/getBy', getBy);
 router.get('/getAll', getAll);
 
@@ -29,4 +30,10 @@ function getAll(req, res, next) {
 
 function workRegister(req, res, next) {
     // TODO Add a record to the table
+}
+
+function createProject(req, res, next) {
+    projectService.createProject(req.body)
+        .then(data => res.send(data))
+        .catch(err => console.log(err));
 }

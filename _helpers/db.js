@@ -19,7 +19,11 @@ module.exports = {
     searchInterfaceSettings,
     searchTeamMembers,
     searchInterfaceSettingsOwner,
-    updateSettingsOwner
+    updateSettingsOwner,
+    getSettingByOwner,
+    createQuickSetting,
+    updateSettingsField,
+    createQuickProject
 };
 
 async function runQuery(query) {
@@ -213,6 +217,47 @@ async function searchInterfaceSettingsOwner(iname) {
 async function updateSettingsOwner(iname, registerField, owner) {
     let query = 'UPDATE SETTINGS SET SOWNER = ' + owner + ' WHERE REGISTERFIELD=\'' + registerField + '\' AND ' +
         'INTERFACENAME=\'' + iname + '\'';
+    console.log(query);
+    return await runQuery(query);
+}
+
+async function getSettingByOwner(sowner) {
+    let query = 'SELECT REGISTERFIELD, REGISTERVALUE FROM SETTINGS WHERE SOWNER=' + sowner;
+    console.log(query);
+    return await runQuery(query);
+}
+
+async function createQuickSetting(registerField, registerValue, sowner) {
+    // FIXME If manager tries to add it crashes because it can't find a owner
+    let interfaceInfo = await getInterfaceNameByOwner(sowner);
+    console.log(interfaceInfo);
+    let query = 'INSERT INTO SETTINGS VALUES (\'' + registerField + '\',\'' + interfaceInfo.rows[0][0] +
+        '\',\'' + registerValue + '\',16,' + sowner + ')';
+    console.log(query);
+    return await runQuery(query);
+}
+
+async function getInterfaceNameByOwner(sowner) {
+    let query = 'SELECT INAME ' +
+        'FROM SETTINGS ' +
+        'INNER JOIN INTERFACE ' +
+        'ON SETTINGS.INTERFACENAME = INTERFACE.INAME ' +
+        'WHERE SETTINGS.SOWNER = ' + sowner;
+
+    return await runQuery(query);
+}
+
+async function updateSettingsField(registerField, newRegisterField, newRegisterValue, sOwner) {
+    let interfaceName = await getInterfaceNameByOwner(sOwner);
+    let query = 'UPDATE SETTINGS SET REGISTERFIELD=\'' + newRegisterField + '\'' +
+        ', REGISTERVALUE=\'' + newRegisterValue + '\' WHERE REGISTERFIELD=\'' + registerField + '\' AND ' +
+        'INTERFACENAME=\'' + interfaceName.rows[0][0] + '\'';
+    console.log(query);
+    return await runQuery(query);
+}
+
+async function createQuickProject(projectName, powner) {
+    let query = 'INSERT INTO PROJECT (PNAME, POWNER) VALUES (\'' + projectName + '\', ' + powner + ')';
     console.log(query);
     return await runQuery(query);
 }

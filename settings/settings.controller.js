@@ -4,9 +4,12 @@ const settingsService = require('./settings.service');
 
 // routes
 router.post('/register', register);
+router.post('/createSetting', createSetting);
 router.post('/getSettings', getSettings);
 router.post('/getSettingsOwner', getSettingsOwner);
+router.post('/getSettingsByOwner', getSettingsByOwner);
 router.put('/updateOwner', updateOwner);
+router.put('/updateFields', updateFields);
 
 module.exports = router;
 
@@ -30,6 +33,28 @@ function getSettingsOwner(req, res, next) {
 
 function updateOwner(req, res, next) {
     settingsService.updateOwner(req.body)
+        .then(data => res.send(data))
+        .catch(err => console.log(err));
+}
+
+function getSettingsByOwner(req, res, next) {
+    settingsService.getSettingsByOwner(req.body)
+        .then(data => res.send(data))
+        .catch(err => console.log(err));
+}
+
+function createSetting(req, res, next) {
+    settingsService.createSetting(req.body)
+        .then(data => {
+            console.log('---DATA');
+            console.log(data);
+            res.send(data);
+        })
+        .catch(err => console.log(err));
+}
+
+function updateFields(req, res, next) {
+    settingsService.updateFields(req.body)
         .then(data => res.send(data))
         .catch(err => console.log(err));
 }
