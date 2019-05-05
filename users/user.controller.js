@@ -8,6 +8,9 @@ const bcrypt = require('bcryptjs');
 router.post('/login', login);
 router.post('/register', register);
 router.get('/getBy', getBy);
+router.post('/getProjects', getUserProjects);
+router.post('/getUserByInterface', getUsersByInterface);
+router.post('/getTeamMembers', getTeamMembers);
 
 module.exports = router;
 
@@ -27,6 +30,25 @@ function register(req, res, next) {
 function getBy(req, res, next) {
     console.log(req.query);
     userService.get(req.query.userdata)
+        .then(data => res.send(data))
+        .catch(err => console.log(err));
+}
+
+function getUserProjects(req, res, next) {
+    userService.getUserProjects(req.user)
+        .then(data => res.send(data))
+        .catch(err => console.log(err));
+}
+
+function getUsersByInterface(req, res, next) {
+    console.log(req.body);
+    userService.getUsersByInterface(req.body)
+        .then(data => res.send(data))
+        .catch(err => console.log(err));
+}
+
+function getTeamMembers(req, res, next) {
+    userService.getTeamMembers(req.body)
         .then(data => res.send(data))
         .catch(err => console.log(err));
 }

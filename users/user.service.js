@@ -7,7 +7,10 @@ const generateJWT = (payload, expiresIn) => jwt.sign(payload, secret, { expiresI
 module.exports = {
     authenticate,
     create,
-    get/*
+    get,
+    getUserProjects,
+    getUsersByInterface,
+    getTeamMembers/*
     getAll,
     getById,
     update,
@@ -23,6 +26,7 @@ async function authenticate({ id, password }) {
             fname: user.firstName,
             lname: user.lastName,
             userRights: user.rights,
+            teamid: user.teamid,
         }, secret, {expiresIn: 60 * 60 * 24});
         console.log(token);
         return {token};
@@ -50,4 +54,15 @@ async function get(userParam) {
     }
     // TODO Set conditions
     return await db.getBy('EMPLOYEE', attrArray, []);
+}
+
+async function getUserProjects({teamid}) {
+    return await db.searchUserProjects(teamid);
+}
+async function getUsersByInterface({iname}) {
+    return await db.searchUsersByInterface(iname);
+}
+
+async function getTeamMembers({teamid}) {
+    return await db.searchTeamMembers(teamid);
 }

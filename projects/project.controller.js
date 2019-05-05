@@ -5,6 +5,7 @@ const projectService = require('./project.service');
 // routes
 router.post('/register', register);
 router.get('/getBy', getBy);
+router.get('/getAll', getAll);
 
 module.exports = router;
 
@@ -16,6 +17,12 @@ function register(req, res, next) {
 
 function getBy(req, res, next) {
     projectService.get(req.query.userdata)
+        .then(data => res.send(data))
+        .catch(err => console.log(err));
+}
+
+function getAll(req, res, next) {
+    projectService.getAll()
         .then(data => res.send(data))
         .catch(err => console.log(err));
 }

@@ -2,7 +2,8 @@ const db = require('../_helpers/db');
 
 module.exports = {
     register,
-    get
+    get,
+    getAll
 };
 
 async function register(projectParam) {
@@ -21,4 +22,9 @@ async function get(userParam) {
     }
     // TODO Set conditions But what conditions???
     return await db.getBy('PROJECT', attrArray, []);
+}
+
+async function getAll() {
+    let query = 'SELECT PROJECTID, PNAME FROM PROJECT ORDER BY PROJECTID';
+    return await db.runQuery(query);
 }

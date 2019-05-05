@@ -12,7 +12,14 @@ module.exports = {
     createProject,
     createWorkRelation,
     createInterface,
-    createSetting
+    createSetting,
+    searchUserProjects,
+    runQuery,
+    searchUsersByInterface,
+    searchInterfaceSettings,
+    searchTeamMembers,
+    searchInterfaceSettingsOwner,
+    updateSettingsOwner
 };
 
 async function runQuery(query) {
@@ -62,6 +69,7 @@ async function getUser(id) {
         password: user.rows[0][1],
         firstName: user.rows[0][3],
         lastName: user.rows[0][4],
+        teamid: user.rows[0][6],
         rights: user.rows[0][7]
     };
 }
@@ -150,6 +158,61 @@ async function createSetting(registerField, interfaceName, registerValue, bitNum
 async function runQueryInfo(queryInfo) {
     let query = queryInfo.constructQuery();
     // TODO Remove this
+    console.log(query);
+    return await runQuery(query);
+}
+
+async function searchUserProjects(teamid) {
+    let query = 'SELECT PROJECT.PROJECTID, PROJECT.PNAME \n' +
+        'FROM TEAM\n' +
+        'INNER JOIN WORKS_ON\n' +
+        'ON TEAM.TEAMID = WORKS_ON.WTEAMID\n' +
+        'INNER JOIN PROJECT\n' +
+        'ON WORKS_ON.WPROJECTID = PROJECT.PROJECTID\n' +
+        'WHERE TEAM.TEAMID = ' + teamid;
+
+    return await runQuery(query);
+}
+async function searchUsersByInterface(iname) {
+    let query = 'SELECT ETEAMID, WWID, FNAME, LNAME, EMAIL ' +
+        'FROM EMPLOYEE ' +
+        'INNER JOIN TEAM ' +
+        'ON EMPLOYEE.ETEAMID = TEAM.TEAMID ' +
+        'INNER JOIN INTERFACE ' +
+        'ON TEAM.TEAMID = INTERFACE.ITEAM ' +
+        'WHERE INTERFACE.INAME = \'' + iname + '\'';
+    return await runQuery(query);
+}
+
+async function searchInterfaceSettings(iname) {
+    let query = 'SELECT REGISTERFIELD, REGISTERVALUE ' +
+        'FROM SETTINGS ' +
+        'INNER JOIN INTERFACE ' +
+        'ON SETTINGS.INTERFACENAME = INTERFACE.INAME ' +
+        'WHERE INAME = \'' + iname + '\'';
+
+    return await runQuery(query);
+}
+
+async function searchTeamMembers(teamid) {
+    let query = 'SELECT WWID, EMAIL, FNAME, LNAME FROM EMPLOYEE WHERE ETEAMID = ' + teamid;
+    return await runQuery(query);
+}
+
+async function searchInterfaceSettingsOwner(iname) {
+    let query = 'SELECT REGISTERFIELD, SOWNER ' +
+        'FROM SETTINGS ' +
+        'INNER JOIN INTERFACE ' +
+        'ON SETTINGS.INTERFACENAME = INTERFACE.INAME ' +
+        'WHERE INAME = \'' + iname + '\'';
+
+    console.log(query);
+    return await runQuery(query);
+}
+
+async function updateSettingsOwner(iname, registerField, owner) {
+    let query = 'UPDATE SETTINGS SET SOWNER = ' + owner + ' WHERE REGISTERFIELD=\'' + registerField + '\' AND ' +
+        'INTERFACENAME=\'' + iname + '\'';
     console.log(query);
     return await runQuery(query);
 }
